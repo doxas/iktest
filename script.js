@@ -15,7 +15,7 @@ window.onload = function(){
 	c.width = c.height = cs;
 
 	// event
-	mx = 1;
+	mx =  0;
 	my = -1;
 	c.addEventListener('mousemove', mouseMove, false);
 
