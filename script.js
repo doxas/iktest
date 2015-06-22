@@ -5,6 +5,7 @@
 window.onload = function(){
 	var i, j;
 	var c, cx, cs, ch, mx, my;
+	var run = true;
 	var PI = Math.PI;
 	var PI2 = PI * 2;
 	var PIH = PI / 2;
@@ -18,14 +19,15 @@ window.onload = function(){
 	mx =  0;
 	my = -1;
 	c.addEventListener('mousemove', mouseMove, false);
+	window.addEventListener('keydown', keyDown, false);
 
 	// point initialize
 	var p = [];
 	for(i = 0; i < 5; ++i){
 		if(i === 0){
-			p.push(new Point(0, 0, 0.5, 0.2));
+			p.push(new Point(0, 0, 0.9, 0.2));
 		}else{
-			p.push(new Point(0, -i * 0.2, 0.5, 0.2));
+			p.push(new Point(0, -i * 0.2, 0.9, 0.2));
 		}
 	}
 
@@ -54,6 +56,8 @@ window.onload = function(){
 			}
 			var sin = Math.sin(p[i].rad);
 			var cos = Math.cos(p[i].rad);
+			if(isNaN(sin)){sin = 0;}
+			if(isNaN(cos)){cos = 1;}
 			var x = t.x - p[i - 1].x;
 			var y = t.y - p[i - 1].y;
 			p[i].dx = cos * x - sin * y;
@@ -64,8 +68,10 @@ window.onload = function(){
 		var r = 0;
 		for(i = 1; i < j; i++){
 			r += p[i].rad;
-			var sin = Math.sin(r);
-			var cos = Math.cos(r);
+			sin = Math.sin(r);
+			cos = Math.cos(r);
+			if(isNaN(sin)){sin = 0;}
+			if(isNaN(cos)){cos = 1;}
 			var v = normalize([p[i].x - p[i - 1].x, p[i].y - p[i - 1].y]);
 			var dx = (cos * v[0] - sin * v[1]) * p[i].length;
 			var dy = (sin * v[0] + cos * v[1]) * p[i].length;
@@ -78,7 +84,7 @@ window.onload = function(){
 			);
 			drawCircle([p[i].x, p[i].y, 0.01], 'blue');
 		}
-		requestAnimationFrame(render);
+		if(run){requestAnimationFrame(render);}
 	}
 
 	// point ==================================================================
@@ -96,6 +102,9 @@ window.onload = function(){
 	function mouseMove(eve){
 		mx = (eve.clientX - c.offsetLeft - ch) / ch;
 		my = -(eve.clientY - c.offsetTop - ch) / ch;
+	}
+	function keyDown(eve){
+		run = (eve.keyCode !== 27);
 	}
 	
 	// math ===================================================================
