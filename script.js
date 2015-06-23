@@ -1,5 +1,5 @@
 // ============================================================================
-// test
+// inverse kinematics test
 // ============================================================================
 
 window.onload = function(){
@@ -23,12 +23,9 @@ window.onload = function(){
 
 	// point initialize
 	var p = [];
-	for(i = 0; i < 5; ++i){
-		if(i === 0){
-			p.push(new Point(0, 0, 0.9, 0.2));
-		}else{
-			p.push(new Point(0, -i * 0.2, 0.9, 0.2));
-		}
+	p.push(new Point(0, 0, 0.9, 0.2));
+	for(i = 1; i < 5; ++i){
+		p.push(new Point(0, -i * 0.2, 0.9, 0.2));
 	}
 
 	// rendering
@@ -47,17 +44,15 @@ window.onload = function(){
 			var vt = normalize([t.x - p[i - 1].x, t.y - p[i - 1].y]);
 			var d = dot(vi, vt);
 			var o = cross(vi, vt);
-			if(o === 0){
-				p[i].rad = 0;
-			}else if(o > 0){
-				p[i].rad = -Math.acos(Math.max(Math.abs(d), p[i].rom));
-			}else{
-				p[i].rad = Math.acos(Math.max(Math.abs(d), p[i].rom));
+			var e = 0;
+			if(o !== 0){
+				e = Math.acos(Math.max(Math.abs(d), p[i].rom));
+				if(o > 0){e *= -1;}
 			}
+			if(isNaN(e)){e = 0;}
+			p[i].rad = e;
 			var sin = Math.sin(p[i].rad);
 			var cos = Math.cos(p[i].rad);
-			if(isNaN(sin)){sin = 0;}
-			if(isNaN(cos)){cos = 1;}
 			var x = t.x - p[i - 1].x;
 			var y = t.y - p[i - 1].y;
 			p[i].dx = cos * x - sin * y;
@@ -70,8 +65,6 @@ window.onload = function(){
 			r += p[i].rad;
 			sin = Math.sin(r);
 			cos = Math.cos(r);
-			if(isNaN(sin)){sin = 0;}
-			if(isNaN(cos)){cos = 1;}
 			var v = normalize([p[i].x - p[i - 1].x, p[i].y - p[i - 1].y]);
 			var dx = (cos * v[0] - sin * v[1]) * p[i].length;
 			var dy = (sin * v[0] + cos * v[1]) * p[i].length;
